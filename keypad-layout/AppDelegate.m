@@ -94,6 +94,9 @@ CGEventRef hotkeyCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef ev
 }
 
 - (NSRect)rectForCoordinateX:(CGFloat)x Y:(CGFloat)y {
+    int widthRatio[3] = {24, 38, 38};
+    int heightRatio[3] = {40, 30, 30};
+    
     NSScreen *primaryScreen = [NSScreen screens][0];
     NSScreen *screen = [NSScreen mainScreen];
     CGFloat statusBarHeight = [[[NSApplication sharedApplication] mainMenu] menuBarHeight];
@@ -105,10 +108,20 @@ CGEventRef hotkeyCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef ev
     rect.origin.y += statusBarHeight;
     rect.size.height -= statusBarHeight + dockHeight;
     rect.size.width -= dockWidth;
-    rect.size.width = rect.size.width / 3.0;
-    rect.size.height = rect.size.height / 3.0;
-    rect.origin.x += x * rect.size.width;
-    rect.origin.y += y * rect.size.height;
+    
+    int totalWidth = rect.size.width;
+    int totalHeight = rect.size.height;
+    
+    rect.size.width = totalWidth * widthRatio[(int)x] / 100;
+    rect.size.height = totalHeight * heightRatio[(int)y] / 100;
+
+    for (int i = 0; i < (int)y; i++) {
+        rect.origin.y += (totalHeight * heightRatio[i] / 100);
+    }
+    
+    for (int i = 0; i < (int)x; i++) {
+        rect.origin.x += (totalWidth * widthRatio[i] / 100);
+    }
     return rect;
 }
 
@@ -163,37 +176,37 @@ CGEventRef hotkeyCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef ev
         break;
     }
 
-    if (NSEqualRects(self.rect, self.wildcardRect)) {
-        // The first button pressed was 0
-        switch (c) {
-        case '7':
-        case '9':
-        case '3':
-        case '1':
-            // if the rectangle is one of the corner rectangles it is enough to
-            // perform the union with a small rectangle in the center of the
-            // screen
-            self.rect = [self rectFromCenterW:false H:false];
-            break;
-        case '4':
-        case '6':
-            // top or bottom center rectangles become a full width centered
-            // rectangle
-            self.rect = [self rectFromCenterW:false H:true];
-            break;
-        case '8':
-        case '2':
-            // left or right center rectangles become a full height centered
-            // rectangle
-            self.rect = [self rectFromCenterW:true H:false];
-            break;
-        case '5':
-            self.rect = [self rectFromCenterW:true H:true];
-            break;
-        default:
-            break;
-        }
-    }
+//    if (NSEqualRects(self.rect, self.wildcardRect)) {
+//        // The first button pressed was 0
+//        switch (c) {
+//        case '7':
+//        case '9':
+//        case '3':
+//        case '1':
+//            // if the rectangle is one of the corner rectangles it is enough to
+//            // perform the union with a small rectangle in the center of the
+//            // screen
+//            self.rect = [self rectFromCenterW:false H:false];
+//            break;
+//        case '4':
+//        case '6':
+//            // top or bottom center rectangles become a full width centered
+//            // rectangle
+//            self.rect = [self rectFromCenterW:false H:true];
+//            break;
+//        case '8':
+//        case '2':
+//            // left or right center rectangles become a full height centered
+//            // rectangle
+//            self.rect = [self rectFromCenterW:true H:false];
+//            break;
+//        case '5':
+//            self.rect = [self rectFromCenterW:true H:true];
+//            break;
+//        default:
+//            break;
+//        }
+//    }
 
     if (NSEqualRects(NSZeroRect, self.rect)) {
         self.rect = rect;
