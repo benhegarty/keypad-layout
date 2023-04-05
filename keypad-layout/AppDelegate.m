@@ -94,7 +94,7 @@ CGEventRef hotkeyCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef ev
 }
 
 - (NSRect)rectForCoordinateX:(CGFloat)x Y:(CGFloat)y {
-    int widthRatio[3] = {24, 38, 38};
+    int widthRatio[3] = {24, 43, 33};
     int heightRatio[3] = {40, 30, 30};
     
     NSScreen *primaryScreen = [NSScreen screens][0];
