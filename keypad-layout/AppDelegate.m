@@ -20,7 +20,7 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification {
     [self installStatusBarIcon];
-    self.wildcardRect = [self rectFromCenterW:false H:false];
+//    self.wildcardRect = [self rectFromCenterW:false H:false];
     self.trustTimer = [NSTimer scheduledTimerWithTimeInterval:0.1
                                                        target:self
                                                      selector:@selector(installHotkeys)
@@ -127,17 +127,17 @@ CGEventRef hotkeyCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef ev
 
 // Create a centered rect, if w or h are true, the rect will span the full width
 // or height if they are false the default size will be 1 px
-- (NSRect)rectFromCenterW:(BOOL)w H:(BOOL)h {
-    NSScreen *screen = [NSScreen mainScreen];
-    CGFloat statusBarHeight = [[[NSApplication sharedApplication] mainMenu] menuBarHeight];
-    CGFloat dockHeight = (screen.frame.size.height - screen.visibleFrame.size.height) - statusBarHeight;
-    NSRect rect = [self rectForCoordinateX:1.5 Y:1.5];
-    rect.size.width = w ? screen.frame.size.width : 1;
-    rect.origin.x -= rect.size.width / 2;
-    rect.size.height = h ? (screen.frame.size.height - statusBarHeight - dockHeight) : 1;
-    rect.origin.y -= rect.size.height / 2;
-    return rect;
-}
+//- (NSRect)rectFromCenterW:(BOOL)w H:(BOOL)h {
+//    NSScreen *screen = [NSScreen mainScreen];
+//    CGFloat statusBarHeight = [[[NSApplication sharedApplication] mainMenu] menuBarHeight];
+//    CGFloat dockHeight = (screen.frame.size.height - screen.visibleFrame.size.height) - statusBarHeight;
+//    NSRect rect = [self rectForCoordinateX:1.5 Y:1.5];
+//    rect.size.width = w ? screen.frame.size.width : 1;
+//    rect.origin.x -= rect.size.width / 2;
+//    rect.size.height = h ? (screen.frame.size.height - statusBarHeight - dockHeight) : 1;
+//    rect.origin.y -= rect.size.height / 2;
+//    return rect;
+//}
 
 - (void)handleHotkeyChar:(char)c {
     NSRect rect = NSZeroRect;
@@ -242,14 +242,14 @@ CGEventRef hotkeyCallback(CGEventTapProxy proxy, CGEventType type, CGEventRef ev
         AXUIElementSetAttributeValue(application, kAXEnhancedUserInterfaceAttribute, kCFBooleanFalse);
     }
 
-    AXValueRef sizeValue = AXValueCreate(kAXValueTypeCGSize, &frame.size);
-    AXError error = AXUIElementSetAttributeValue(window, kAXSizeAttribute, sizeValue);
-    CFRelease(sizeValue);
-
     AXValueRef positionValue = AXValueCreate(kAXValueTypeCGPoint, &frame.origin);
-    error = AXUIElementSetAttributeValue(window, kAXPositionAttribute, positionValue);
+    AXError error = AXUIElementSetAttributeValue(window, kAXPositionAttribute, positionValue);
     CFRelease(positionValue);
-
+    
+    AXValueRef sizeValue = AXValueCreate(kAXValueTypeCGSize, &frame.size);
+    error = AXUIElementSetAttributeValue(window, kAXSizeAttribute, sizeValue);
+    CFRelease(sizeValue);
+    
     if (hasEnhancedUserInterface) {
         // Should macOS ever allow us to set origin and size in one call, this should work.
         AXUIElementSetAttributeValue(application, kAXEnhancedUserInterfaceAttribute, kCFBooleanTrue);
